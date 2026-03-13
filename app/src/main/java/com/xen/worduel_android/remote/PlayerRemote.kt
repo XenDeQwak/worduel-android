@@ -5,7 +5,10 @@ import retrofit2.http.POST
 
 
 data class PlayerModel (
-    val nickname: String
+    val playerId: String,
+    val nickname: String,
+    val currentRoomId: String
+
 )
 data class NicknameRequest (
     val nickname: String

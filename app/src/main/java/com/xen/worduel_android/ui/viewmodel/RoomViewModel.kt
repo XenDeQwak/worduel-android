@@ -3,6 +3,7 @@ package com.xen.worduel_android.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.xen.worduel_android.remote.GuessRequest
 import com.xen.worduel_android.remote.RoomModel
 import com.xen.worduel_android.remote.repository.RoomRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +21,35 @@ class RoomViewModel(private val repository: RoomRepository): ViewModel() {
             _currentRoom.value = room
         }
     }
+
+    suspend fun joinRoom(roomId: String) {
+        viewModelScope.launch {
+            val room = repository.joinRoom(roomId)
+            _currentRoom.value = room
+        }
+    }
+
+    suspend fun leaveRoom(roomId: String) {
+        viewModelScope.launch {
+            val room = repository.leaveRoom(roomId)
+            _currentRoom.value = room
+        }
+    }
+
+    suspend fun startGame(roomId: String) {
+        viewModelScope.launch {
+            val room = repository.startGame(roomId)
+            _currentRoom.value = room
+        }
+    }
+
+    suspend fun submitGuess(guessRequest: GuessRequest) {
+        viewModelScope.launch {
+            val room = repository.submitGuess(guessRequest)
+            _currentRoom.value = room
+        }
+    }
+
 
     class Factory(private val repository: RoomRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
