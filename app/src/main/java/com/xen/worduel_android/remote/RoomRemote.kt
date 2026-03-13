@@ -16,10 +16,10 @@ data class GuessRequest (
     val guess: String
 )
 
-const val roomTypeEndpoint = "api/room"
+const val roomTypeEndpoint = "api/games"
 
 interface RoomApi {
-    @POST(roomTypeEndpoint)
+    @POST("$roomTypeEndpoint/room")
     suspend fun createRoom(@Query("type") roomType: String): RoomModel
 
     @POST("$roomTypeEndpoint/join")

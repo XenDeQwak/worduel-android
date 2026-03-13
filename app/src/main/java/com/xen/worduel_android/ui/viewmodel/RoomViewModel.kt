@@ -15,35 +15,35 @@ class RoomViewModel(private val repository: RoomRepository): ViewModel() {
     private val _currentRoom = MutableStateFlow<RoomModel?>(null)
     private val currentRoom = _currentRoom.asStateFlow()
 
-    suspend fun createRoom(roomType: String) {
+    fun createRoom(roomType: String) {
         viewModelScope.launch {
             val room = repository.createRoom(roomType)
             _currentRoom.value = room
         }
     }
 
-    suspend fun joinRoom(roomId: String) {
+    fun joinRoom(roomId: String) {
         viewModelScope.launch {
             val room = repository.joinRoom(roomId)
             _currentRoom.value = room
         }
     }
 
-    suspend fun leaveRoom(roomId: String) {
+    fun leaveRoom(roomId: String) {
         viewModelScope.launch {
             val room = repository.leaveRoom(roomId)
             _currentRoom.value = room
         }
     }
 
-    suspend fun startGame(roomId: String) {
+    fun startGame(roomId: String) {
         viewModelScope.launch {
             val room = repository.startGame(roomId)
             _currentRoom.value = room
         }
     }
 
-    suspend fun submitGuess(guessRequest: GuessRequest) {
+    fun submitGuess(guessRequest: GuessRequest) {
         viewModelScope.launch {
             val room = repository.submitGuess(guessRequest)
             _currentRoom.value = room

@@ -14,10 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModelProvider
 import com.xen.worduel_android.remote.PlayerApi
+import com.xen.worduel_android.remote.RoomApi
 import com.xen.worduel_android.remote.repository.PlayerRepository
+import com.xen.worduel_android.remote.repository.RoomRepository
 import com.xen.worduel_android.ui.composable.LoginScreen
+import com.xen.worduel_android.ui.screen.MenuScreen
 import com.xen.worduel_android.ui.theme.WorduelandroidTheme
 import com.xen.worduel_android.ui.viewmodel.PlayerViewModel
+import com.xen.worduel_android.ui.viewmodel.RoomViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -37,6 +41,12 @@ class MainActivity : ComponentActivity() {
         val playerFactory = PlayerViewModel.Factory(playerRepository)
         val playerViewModel = ViewModelProvider(this, playerFactory)[PlayerViewModel::class.java]
 
+        val roomApi = retrofit.create(RoomApi::class.java)
+        val roomRepository = RoomRepository(roomApi)
+        val roomFactory = RoomViewModel.Factory(roomRepository)
+        val roomViewModel = ViewModelProvider(this, roomFactory)[RoomViewModel::class.java]
+
+
         setContent {
             WorduelandroidTheme {
                 when (currentScreen.value) {
@@ -44,7 +54,15 @@ class MainActivity : ComponentActivity() {
                         playerViewModel,
                         onNicknameSet = {
                             currentScreen.value = "menu"
-                    })
+                        }
+                    )
+
+                    "menu" -> MenuScreen(
+                        roomViewModel,
+                        onRoomCreated = {
+                            currentScreen.value = "game"
+                        }
+                    )
                 }
             }
         }
