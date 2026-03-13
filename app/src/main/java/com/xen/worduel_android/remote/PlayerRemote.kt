@@ -7,9 +7,8 @@ data class NicknameRequest (
     val nickname: String
 )
 
-
-const val playerEndpoint = "/players"
+const val playerEndpoint = "api/players"
 interface PlayerApi {
-    @POST("/nickname")
+    @POST("$playerEndpoint/nickname")
     suspend fun setNickname(@Body nicknameRequest: NicknameRequest): NicknameRequest
 }

@@ -5,13 +5,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.xen.worduel_android.remote.NicknameRequest
 import com.xen.worduel_android.remote.repository.PlayerRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.jvm.java
 
 class PlayerViewModel(private val repository: PlayerRepository): ViewModel() {
-    fun setNickname(nicknameRequest: NicknameRequest) {
+
+    private val _currentPlayer = MutableStateFlow<NicknameRequest?>(null)
+    val currentPlayer = _currentPlayer.asStateFlow()
+
+    fun setNickname(nickname: String) {
         viewModelScope.launch {
-            repository.setNickname(nicknameRequest)
+            val request = NicknameRequest(nickname)
+            val player = repository.setNickname(request)
+            _currentPlayer.value = player
         }
     }
 
