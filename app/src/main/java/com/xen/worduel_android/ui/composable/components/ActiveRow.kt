@@ -3,6 +3,7 @@ package com.xen.worduel_android.ui.composable.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.xen.worduel_android.ui.composable.ColorBorder
 import com.xen.worduel_android.ui.composable.ColorEmpty
@@ -21,4 +22,10 @@ fun ActiveRow(input: String) {
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ActiveRowPreview() {
+    ActiveRow("HELLO");
 }
