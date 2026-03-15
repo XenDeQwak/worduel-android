@@ -1,5 +1,6 @@
 package com.xen.worduel_android.remote
 
+import com.xen.worduel_android.remote.dto.GuessResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -32,6 +33,6 @@ interface RoomApi {
     suspend fun startGame(@Query("roomId") roomId: String): RoomModel
 
     @POST("$roomTypeEndpoint/guess")
-    suspend fun submitGuess(@Body guessRequest: GuessRequest): RoomModel
+    suspend fun submitGuess(@Body guessRequest: GuessRequest): GuessResponse
 
 }
