@@ -1,5 +1,6 @@
 package com.xen.worduel_android.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -144,11 +145,15 @@ class RoomViewModel(
                     won           -> { _isWin.value = true; _isGameOver.value = true }
                     outOfAttempts -> { _isGameOver.value = true }
                 }
+                Log.d("SUBMIT_GUESS", "IsWon?: $won");
+                Log.d("SUBMIT_GUESS", "IsOutOfAttempts?: $outOfAttempts");
             }.onFailure { error ->
                 _errorMessage.value = error.message ?: "Something went wrong"
             }
             _isLoading.value = false
         }
+
+        Log.d("SUBMIT_GUESS", "Guess Submitted: $guess");
     }
 
     fun dismissError() { _errorMessage.value = null }
