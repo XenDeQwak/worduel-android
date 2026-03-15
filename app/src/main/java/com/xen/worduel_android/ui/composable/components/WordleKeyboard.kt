@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.xen.worduel_android.remote.LetterType
 import com.xen.worduel_android.remote.dto.GuessResponse
-import com.xen.worduel_android.ui.screen.ColorKey
-import com.xen.worduel_android.ui.screen.KeyboardRows
-import com.xen.worduel_android.ui.screen.bestOf
-import com.xen.worduel_android.ui.screen.toColor
+import com.xen.worduel_android.ui.composable.ColorKey
+import com.xen.worduel_android.ui.composable.KeyboardRows
+import com.xen.worduel_android.ui.composable.bestOf
+import com.xen.worduel_android.ui.composable.toColor
 import kotlin.collections.forEach
 
 @Composable

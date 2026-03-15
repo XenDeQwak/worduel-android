@@ -14,7 +14,7 @@ import com.xen.worduel_android.remote.RoomApi
 import com.xen.worduel_android.remote.repository.PlayerRepository
 import com.xen.worduel_android.remote.repository.RoomRepository
 import com.xen.worduel_android.ui.composable.LoginScreen
-import com.xen.worduel_android.ui.screen.GameScreen
+import com.xen.worduel_android.ui.composable.GameScreen
 import com.xen.worduel_android.ui.composable.MenuScreen
 import com.xen.worduel_android.ui.theme.WorduelandroidTheme
 import com.xen.worduel_android.ui.viewmodel.PlayerViewModel

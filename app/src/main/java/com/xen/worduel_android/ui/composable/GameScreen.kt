@@ -1,4 +1,4 @@
-package com.xen.worduel_android.ui.screen
+package com.xen.worduel_android.ui.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState

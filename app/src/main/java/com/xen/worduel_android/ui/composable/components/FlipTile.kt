@@ -23,9 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xen.worduel_android.remote.LetterType
-import com.xen.worduel_android.ui.screen.ColorEmpty
-import com.xen.worduel_android.ui.screen.ColorFilled
-import com.xen.worduel_android.ui.screen.toColor
+import com.xen.worduel_android.ui.composable.ColorEmpty
+import com.xen.worduel_android.ui.composable.ColorFilled
+import com.xen.worduel_android.ui.composable.toColor
 import kotlinx.coroutines.delay
 
 @Composable

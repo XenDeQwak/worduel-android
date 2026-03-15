@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.xen.worduel_android.ui.screen.ColorBorder
-import com.xen.worduel_android.ui.screen.ColorEmpty
-import com.xen.worduel_android.ui.screen.ColorFilled
+import com.xen.worduel_android.ui.composable.ColorBorder
+import com.xen.worduel_android.ui.composable.ColorEmpty
+import com.xen.worduel_android.ui.composable.ColorFilled
 import com.xen.worduel_android.ui.viewmodel.RoomViewModel
 
 @Composable
