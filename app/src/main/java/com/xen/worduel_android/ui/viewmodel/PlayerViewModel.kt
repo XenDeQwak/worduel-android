@@ -9,20 +9,34 @@ import com.xen.worduel_android.remote.repository.PlayerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.jvm.java
 
-class PlayerViewModel(private val repository: PlayerRepository): ViewModel() {
+class PlayerViewModel(private val repository: PlayerRepository) : ViewModel() {
 
-    private val _currentPlayer = MutableStateFlow<PlayerModel?>(null)
-    val currentPlayer = _currentPlayer.asStateFlow()
+    private val _player = MutableStateFlow<PlayerModel?>(null)
+    val player = _player.asStateFlow()
 
-    fun setNickname(nickname: String) {
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
+
+    fun setNickname(nickname: String, onSuccess: (PlayerModel) -> Unit) {
         viewModelScope.launch {
-            val request = NicknameRequest(nickname)
-            val player = repository.setNickname(request)
-            _currentPlayer.value = player
+            _isLoading.value = true
+            runCatching {
+                repository.setNickname(NicknameRequest(nickname))
+            }.onSuccess { playerModel ->
+                _player.value = playerModel
+                onSuccess(playerModel)
+            }.onFailure {
+                _errorMessage.value = it.message ?: "Failed to set nickname"
+            }
+            _isLoading.value = false
         }
     }
+
+    fun dismissError() { _errorMessage.value = null }
 
     class Factory(private val repository: PlayerRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
