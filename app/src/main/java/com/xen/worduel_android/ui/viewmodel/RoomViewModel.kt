@@ -45,16 +45,40 @@ class RoomViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    fun createSoloGame(onReady: () -> Unit = {}) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            runCatching {
+                val created = repository.createRoom("solo")
+                val joined  = repository.joinRoom(created.roomId)
+                repository.startGame(joined.roomId)
+            }.onSuccess { started ->
+                _currentRoom.value = started
+                onReady()
+            }.onFailure {
+                _errorMessage.value = it.message ?: "Failed to start game"
+            }
+            _isLoading.value = false
+        }
+    }
 
     fun createRoom(roomType: String) {
         viewModelScope.launch {
-            _currentRoom.value = repository.createRoom(roomType)
+            _isLoading.value = true
+            runCatching { repository.createRoom(roomType) }
+                .onSuccess { _currentRoom.value = it }
+                .onFailure { _errorMessage.value = it.message }
+            _isLoading.value = false
         }
     }
 
     fun joinRoom(roomId: String) {
         viewModelScope.launch {
-            _currentRoom.value = repository.joinRoom(roomId)
+            _isLoading.value = true
+            runCatching { repository.joinRoom(roomId) }
+                .onSuccess { _currentRoom.value = it }
+                .onFailure { _errorMessage.value = it.message }
+            _isLoading.value = false
         }
     }
 
@@ -66,7 +90,11 @@ class RoomViewModel(
 
     fun startGame(roomId: String) {
         viewModelScope.launch {
-            _currentRoom.value = repository.startGame(roomId)
+            _isLoading.value = true
+            runCatching { repository.startGame(roomId) }
+                .onSuccess { _currentRoom.value = it }
+                .onFailure { _errorMessage.value = it.message }
+            _isLoading.value = false
         }
     }
 
@@ -97,7 +125,6 @@ class RoomViewModel(
 
         viewModelScope.launch {
             _isLoading.value = true
-
             runCatching {
                 repository.submitGuess(
                     GuessRequest(
@@ -109,19 +136,17 @@ class RoomViewModel(
                 )
             }.onSuccess { response ->
                 _currentInput.value = ""
-                _guessHistory.value = _guessHistory.value + response
-                val won = response.position.all { it == LetterType.CORRECT }
-                val outOfAttempts = _guessHistory.value.size >= MAX_ATTEMPTS
+                _guessHistory.value += response
 
+                val won           = response.position.all { it == LetterType.CORRECT }
+                val outOfAttempts = _guessHistory.value.size >= MAX_ATTEMPTS
                 when {
-                    won -> { _isWin.value = true; _isGameOver.value = true }
+                    won           -> { _isWin.value = true; _isGameOver.value = true }
                     outOfAttempts -> { _isGameOver.value = true }
                 }
-
             }.onFailure { error ->
                 _errorMessage.value = error.message ?: "Something went wrong"
             }
-
             _isLoading.value = false
         }
     }
@@ -136,6 +161,7 @@ class RoomViewModel(
         _currentRoom.value  = null
         _errorMessage.value = null
     }
+
     class Factory(
         private val repository: RoomRepository,
         private val playerId: String,

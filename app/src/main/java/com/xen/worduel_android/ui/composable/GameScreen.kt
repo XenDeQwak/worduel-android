@@ -38,37 +38,24 @@ val KeyboardRows = listOf(
 
 @Composable
 fun GameScreen(roomViewModel: RoomViewModel) {
-    val currentRoom by roomViewModel.currentRoom.collectAsState()
     val guessHistory by roomViewModel.guessHistory.collectAsState()
     val currentInput by roomViewModel.currentInput.collectAsState()
-    val isGameOver by roomViewModel.isGameOver.collectAsState()
-    val isWin by roomViewModel.isWin.collectAsState()
+    val isGameOver   by roomViewModel.isGameOver.collectAsState()
+    val isWin        by roomViewModel.isWin.collectAsState()
     val errorMessage by roomViewModel.errorMessage.collectAsState()
-    val isLoading by roomViewModel.isLoading.collectAsState()
+    val isLoading    by roomViewModel.isLoading.collectAsState()
 
-    LaunchedEffect(Unit) {
-        roomViewModel.createRoom("solo")
-    }
-    LaunchedEffect(currentRoom?.roomId) {
-        currentRoom?.roomId?.let { id ->
-            roomViewModel.joinRoom(id)
-            roomViewModel.startGame(id)
-        }
-    }
-
-    if (currentRoom?.roomType.equals("solo", ignoreCase = true)) {
-        SoloGameContent(
-            guessHistory = guessHistory,
-            currentInput = currentInput,
-            isGameOver = isGameOver,
-            isWin = isWin,
-            errorMessage = errorMessage,
-            isLoading = isLoading,
-            onKey = roomViewModel::onKey,
-            onBackspace = roomViewModel::onBackspace,
-            onEnter = roomViewModel::onEnter,
-            onDismissError = roomViewModel::dismissError,
-            onPlayAgain = roomViewModel::resetGame
-        )
-    }
+    SoloGameContent(
+        guessHistory   = guessHistory,
+        currentInput   = currentInput,
+        isGameOver     = isGameOver,
+        isWin          = isWin,
+        errorMessage   = errorMessage,
+        isLoading      = isLoading,
+        onKey          = roomViewModel::onKey,
+        onBackspace    = roomViewModel::onBackspace,
+        onEnter        = roomViewModel::onEnter,
+        onDismissError = roomViewModel::dismissError,
+        onPlayAgain    = roomViewModel::resetGame
+    )
 }
