@@ -46,6 +46,9 @@ class RoomViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    private val _shouldExitGame = MutableStateFlow(false)
+    val shouldExitGame = _shouldExitGame.asStateFlow()
+
     fun createSoloGame(onReady: () -> Unit = {}) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -56,6 +59,7 @@ class RoomViewModel(
             }.onSuccess { started ->
                 _currentRoom.value = started
                 onReady()
+                //_onEnd.value = onEnd
             }.onFailure {
                 _errorMessage.value = it.message ?: "Failed to start game"
             }
@@ -159,12 +163,17 @@ class RoomViewModel(
     fun dismissError() { _errorMessage.value = null }
 
     fun resetGame() {
+        _shouldExitGame.value = true
         _guessHistory.value = emptyList()
         _currentInput.value = ""
         _isGameOver.value   = false
         _isWin.value        = false
         _currentRoom.value  = null
         _errorMessage.value = null
+    }
+
+    fun prepareRoom() {
+        _shouldExitGame.value = false
     }
 
     class Factory(

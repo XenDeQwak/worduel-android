@@ -57,7 +57,7 @@ fun GameOverCard(
             colors  = ButtonDefaults.buttonColors(containerColor = ColorCorrect),
             shape   = RoundedCornerShape(8.dp)
         ) {
-            Text("Play Again", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            Text("Exit", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
     }
 }

@@ -1,9 +1,12 @@
 package com.xen.worduel_android
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -80,6 +83,15 @@ class MainActivity : ComponentActivity() {
                             playerModel = player
                         )
                         val roomViewModel = ViewModelProvider(this, roomFactory)[RoomViewModel::class.java]
+
+                        val shouldExitGame by roomViewModel.shouldExitGame.collectAsState()
+                        LaunchedEffect(shouldExitGame) {
+                            if (shouldExitGame) {
+                                Log.d("GAME_EXIT", "Exited a Completed Game")
+                                roomViewModel.prepareRoom()
+                                currentScreen = "menu"
+                            }
+                        }
 
                         GameScreen(roomViewModel = roomViewModel)
                     }
