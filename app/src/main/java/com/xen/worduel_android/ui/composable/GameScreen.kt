@@ -99,7 +99,7 @@ fun GameScreen(roomViewModel: RoomViewModel) {
                     player1Guess = player1Attempts,
                     player2Guess = player2Attempts,
 
-                    OnJoin = {
+                    onJoin = {
                         roomViewModel.startGame(room.roomId)
                              },
                     isGameActive

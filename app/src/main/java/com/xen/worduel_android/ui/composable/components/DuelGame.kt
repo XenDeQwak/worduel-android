@@ -47,7 +47,7 @@ fun DuelGameContent(
     player1Guess: Int,
     player2Guess: Int,
 
-    OnJoin: (() -> Unit)?,
+    onJoin: () -> Unit,
     isGameActive: Boolean
 ) {
     Box(
@@ -75,18 +75,18 @@ fun DuelGameContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             ) {
-//                Spacer(Modifier.height(12.dp))
-//                if (!isGameActive) {
-//                    Button(
-//                        onClick  = { OnJoin!! },
-//                        enabled  = true,
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(top = 16.dp)
-//                    ) {
-//                        Text("Start Game")
-//                    }
-//                }
+                Spacer(Modifier.height(12.dp))
+                if (!isGameActive && true) {
+                    Button(
+                        onClick  = onJoin,
+                        enabled  = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp)
+                    ) {
+                        Text("Start Game")
+                    }
+                }
                 Spacer(Modifier.height(12.dp))
                 MultiplayerDetails(
                     roomId          = roomId,
@@ -165,7 +165,7 @@ fun DuelGameContentPreview() {
         player1Guess = 3,
         player2Guess = 5,
 
-        null,
+        {},
         false
     )
 }
