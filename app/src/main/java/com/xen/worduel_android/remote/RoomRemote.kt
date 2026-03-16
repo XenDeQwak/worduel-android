@@ -2,7 +2,9 @@ package com.xen.worduel_android.remote
 
 import com.xen.worduel_android.remote.dto.GuessResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.UUID
 
@@ -29,6 +31,10 @@ data class GuessRequest (
 const val roomTypeEndpoint = "api/games/room"
 
 interface RoomApi {
+
+    @GET("$roomTypeEndpoint/{id}")
+    suspend fun getRoom(@Path(value = "id") id: String): RoomModel
+
     @POST(roomTypeEndpoint)
     suspend fun createRoom(@Query("type") roomType: String): RoomModel
 
