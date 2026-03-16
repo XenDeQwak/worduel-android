@@ -28,14 +28,13 @@ fun MultiplayerDetails(
     player1Name: String,
     player2Name: String,
     player1Attempts: Int,
-    player2Attempts: Int,
-    modifier: Modifier = Modifier
+    player2Attempts: Int
 ) {
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(Color(0xFF1A1A1B))

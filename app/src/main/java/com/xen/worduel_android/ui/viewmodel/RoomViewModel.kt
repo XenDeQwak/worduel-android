@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class RoomViewModel(
     private val repository: RoomRepository,
     private val playerId: String,
-    private val playerModel: PlayerModel
+    private val player: PlayerModel
 ) : ViewModel() {
 
     companion object {
@@ -46,6 +46,25 @@ class RoomViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+
+    private val _isGameActive = MutableStateFlow(false)
+    val isGameActive = _isGameActive.asStateFlow()
+
+
+    private val _player1Name = MutableStateFlow("")
+    val player1Name = _player1Name.asStateFlow()
+
+    private val _player2Name = MutableStateFlow("")
+    val player2Name = _player2Name.asStateFlow()
+
+    private val _player1Attempts = MutableStateFlow(0)
+    val player1Attempts = _player1Attempts.asStateFlow()
+
+    private val _player2Attempts = MutableStateFlow(0)
+    val player2Attempts = _player2Attempts.asStateFlow()
+
+
+
     private val _shouldExitGame = MutableStateFlow(false)
     val shouldExitGame = _shouldExitGame.asStateFlow()
 
@@ -55,11 +74,28 @@ class RoomViewModel(
             runCatching {
                 val created = repository.createRoom("solo")
                 val joined  = repository.joinRoom(created.roomId)
+                Log.d("ROOM_CREATION", joined.toString())
                 repository.startGame(joined.roomId)
             }.onSuccess { started ->
                 _currentRoom.value = started
                 onReady()
-                //_onEnd.value = onEnd
+            }.onFailure {
+                _errorMessage.value = it.message ?: "Failed to start game"
+            }
+            _isLoading.value = false
+        }
+    }
+
+    fun createDuelGame(onReady: () -> Unit = {}) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            runCatching {
+                val created = repository.createRoom("duel")
+                repository.joinRoom(created.roomId)
+            }.onSuccess { joined ->
+                _currentRoom.value = joined
+                Log.d("ROOM_CREATION", joined.toString())
+                onReady()
             }.onFailure {
                 _errorMessage.value = it.message ?: "Failed to start game"
             }
@@ -73,6 +109,23 @@ class RoomViewModel(
             runCatching { repository.createRoom(roomType) }
                 .onSuccess { _currentRoom.value = it }
                 .onFailure { _errorMessage.value = it.message }
+            _isLoading.value = false
+        }
+    }
+
+    fun joinNewRoom(onReady: () -> Unit = {}, roomId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            runCatching {
+                repository.joinRoom(roomId)
+            }
+                .onSuccess {
+                    _currentRoom.value = it
+                    onReady()
+                }
+                .onFailure {
+                    _errorMessage.value = it.message
+                }
             _isLoading.value = false
         }
     }
@@ -100,6 +153,8 @@ class RoomViewModel(
                 .onSuccess { _currentRoom.value = it }
                 .onFailure { _errorMessage.value = it.message }
             _isLoading.value = false
+
+            _isGameActive.value = true;
         }
     }
 
@@ -135,7 +190,7 @@ class RoomViewModel(
                     GuessRequest(
                         roomId   = room.roomId,
                         playerId = playerId,
-                        player   = playerModel,
+                        player   = player,
                         guess    = guess
                     )
                 )
@@ -170,6 +225,10 @@ class RoomViewModel(
         _isWin.value        = false
         _currentRoom.value  = null
         _errorMessage.value = null
+        _player1Name.value = ""
+        _player2Name.value = ""
+        _player1Attempts.value = 0
+        _player2Attempts.value = 0
     }
 
     fun prepareRoom() {
@@ -179,12 +238,12 @@ class RoomViewModel(
     class Factory(
         private val repository: RoomRepository,
         private val playerId: String,
-        private val playerModel: PlayerModel
+        private val player: PlayerModel
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(RoomViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return RoomViewModel(repository, playerId, playerModel) as T
+                return RoomViewModel(repository, playerId, player) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

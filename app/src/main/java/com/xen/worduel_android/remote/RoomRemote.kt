@@ -4,10 +4,19 @@ import com.xen.worduel_android.remote.dto.GuessResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Query
+import java.util.UUID
 
 data class RoomModel (
     val roomId: String,
-    val roomType: String
+    val roomType: String,
+    val game: GameInstance,
+    val players: List<PlayerModel>
+)
+
+data class GameInstance (
+    val gameId: String,
+    val targetWord: String,
+    val playerGameStats: Map<UUID, PlayerGameStats>
 )
 
 data class GuessRequest (

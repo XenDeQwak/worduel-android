@@ -45,15 +45,15 @@ fun MenuScreen(
                 }
             ) {
                 if (isLoading) CircularProgressIndicator(color = Color.White, modifier = Modifier.size(18.dp))
-                else Text("Solo")
+                else Text("Create Solo Game")
             }
 
             Button(
                 modifier = Modifier.weight(1f),
                 enabled  = !isLoading,
-                onClick  = { roomViewModel.createRoom("duel") }
+                onClick  = { roomViewModel.createDuelGame(onReady = onRoomCreated) }
             ) {
-                Text("Duel")
+                Text("Create Duel Game")
             }
         }
 
@@ -67,7 +67,7 @@ fun MenuScreen(
         )
 
         Button(
-            onClick  = { roomViewModel.joinRoom(joinRoomId) },
+            onClick  = { roomViewModel.joinNewRoom(onRoomCreated, joinRoomId) },
             enabled  = joinRoomId.isNotBlank() && !isLoading,
             modifier = Modifier
                 .fillMaxWidth()

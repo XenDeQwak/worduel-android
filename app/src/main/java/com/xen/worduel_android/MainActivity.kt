@@ -22,6 +22,12 @@ import com.xen.worduel_android.ui.composable.MenuScreen
 import com.xen.worduel_android.ui.theme.WorduelandroidTheme
 import com.xen.worduel_android.ui.viewmodel.PlayerViewModel
 import com.xen.worduel_android.ui.viewmodel.RoomViewModel
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -34,8 +40,42 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val okHttpClient = OkHttpClient.Builder()
+            .build()
+
+        val wsRequest = Request.Builder()
+            .url("ws://10.0.2.2:8080/ws")
+            .build()
+
+        val wsListener = object : WebSocketListener() {
+            override fun onOpen(webSocket: WebSocket, response: Response) {
+                println("Connected to server")
+                webSocket.send("Hello from Kotlin client")
+            }
+
+            override fun onMessage(webSocket: WebSocket, text: String) {
+                println("Received message: $text")
+            }
+
+            override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                println("Received bytes: ${bytes.hex()}")
+            }
+
+            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                println("Closing: $code / $reason")
+                webSocket.close(1000, null)
+            }
+
+            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                t.printStackTrace()
+            }
+        }
+
+        val webSocket = okHttpClient.newWebSocket(wsRequest, wsListener)
+
         val retrofit = Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8080/")
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -50,6 +90,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WorduelandroidTheme {
                 when (currentScreen) {
+
                     "login" -> LoginScreen(
                         playerViewModel = playerViewModel,
                         onNicknameSet   = { player ->
@@ -64,7 +105,7 @@ class MainActivity : ComponentActivity() {
                         val roomFactory = RoomViewModel.Factory(
                             repository  = roomRepository,
                             playerId    = player.playerId,
-                            playerModel = player
+                            player = player
                         )
                         val roomViewModel = ViewModelProvider(this, roomFactory)[RoomViewModel::class.java]
 
@@ -80,7 +121,7 @@ class MainActivity : ComponentActivity() {
                         val roomFactory = RoomViewModel.Factory(
                             repository  = roomRepository,
                             playerId    = player.playerId,
-                            playerModel = player
+                            player = player
                         )
                         val roomViewModel = ViewModelProvider(this, roomFactory)[RoomViewModel::class.java]
 
@@ -95,8 +136,10 @@ class MainActivity : ComponentActivity() {
 
                         GameScreen(roomViewModel = roomViewModel)
                     }
+
                 }
             }
         }
+
     }
 }
