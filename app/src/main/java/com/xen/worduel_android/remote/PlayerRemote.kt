@@ -20,6 +20,10 @@ data class NicknameRequest (
     val nickname: String
 )
 
+object PlayerIdHolder {
+    var guestId: String? = null
+}
+
 const val playerEndpoint = "api/players"
 interface PlayerApi {
     @POST("$playerEndpoint/nickname")

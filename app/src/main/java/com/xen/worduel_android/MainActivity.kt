@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModelProvider
 import com.xen.worduel_android.remote.PlayerApi
+import com.xen.worduel_android.remote.PlayerIdInterceptor
 import com.xen.worduel_android.remote.PlayerModel
 import com.xen.worduel_android.remote.RoomApi
 import com.xen.worduel_android.remote.repository.PlayerRepository
@@ -22,11 +23,13 @@ import com.xen.worduel_android.ui.composable.MenuScreen
 import com.xen.worduel_android.ui.theme.WorduelandroidTheme
 import com.xen.worduel_android.ui.viewmodel.PlayerViewModel
 import com.xen.worduel_android.ui.viewmodel.RoomViewModel
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import okhttp3.logging.HttpLoggingInterceptor
 import okio.ByteString
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -40,7 +43,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        val logger = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
         val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(logger)
+            .addInterceptor(PlayerIdInterceptor())
             .build()
 
         val wsRequest = Request.Builder()
