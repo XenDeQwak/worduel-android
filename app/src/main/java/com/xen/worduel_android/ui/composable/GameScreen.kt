@@ -77,7 +77,6 @@ fun GameScreen(roomViewModel: RoomViewModel) {
                 val player2Name by roomViewModel.player2Name.collectAsState()
                 val player1Attempts by roomViewModel.player1Attempts.collectAsState()
                 val player2Attempts by roomViewModel.player2Attempts.collectAsState()
-
                 val isGameActive by roomViewModel.isGameActive.collectAsState()
 
                 DuelGameContent(
@@ -116,7 +115,5 @@ fun GameScreen(roomViewModel: RoomViewModel) {
             }
         }
     }
-
-
 
 }

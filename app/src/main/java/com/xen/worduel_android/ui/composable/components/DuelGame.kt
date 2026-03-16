@@ -75,17 +75,17 @@ fun DuelGameContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
             ) {
-                Spacer(Modifier.height(12.dp))
-                if (!isGameActive && true) {
-                    Button(
-                        onClick  = onJoin,
-                        enabled  = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                    ) {
-                        Text("Start Game")
-                    }
+                if (!isGameActive) {
+//                    Spacer(Modifier.height(12.dp))
+//                    Button(
+//                        onClick  = onJoin,
+//                        enabled  = true,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(top = 16.dp)
+//                    ) {
+//                        Text("Start Game")
+//                    }
                 }
                 Spacer(Modifier.height(12.dp))
                 MultiplayerDetails(

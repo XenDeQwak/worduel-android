@@ -13,6 +13,7 @@ import com.xen.worduel_android.remote.LetterType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class RoomViewModel(
     private val repository: RoomRepository,
@@ -72,12 +73,10 @@ class RoomViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             runCatching {
-                val created = repository.createRoom("solo")
-                val joined  = repository.joinRoom(created.roomId)
-                Log.d("ROOM_CREATION", joined.toString())
-                repository.startGame(joined.roomId)
-            }.onSuccess { started ->
-                _currentRoom.value = started
+                repository.createRoom("solo")
+            }.onSuccess {
+                joinRoom(it.roomId)
+                _currentRoom.value = it
                 onReady()
             }.onFailure {
                 _errorMessage.value = it.message ?: "Failed to start game"
@@ -90,11 +89,10 @@ class RoomViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             runCatching {
-                val created = repository.createRoom("duel")
-                repository.joinRoom(created.roomId)
-            }.onSuccess { joined ->
-                _currentRoom.value = joined
-                Log.d("ROOM_CREATION", joined.toString())
+                repository.createRoom("duel")
+            }.onSuccess {
+                joinRoom(it.roomId)
+                _currentRoom.value = it
                 onReady()
             }.onFailure {
                 _errorMessage.value = it.message ?: "Failed to start game"
@@ -115,27 +113,26 @@ class RoomViewModel(
 
     fun joinNewRoom(onReady: () -> Unit = {}, roomId: String) {
         viewModelScope.launch {
-            _isLoading.value = true
-            runCatching {
-                repository.joinRoom(roomId)
-            }
-                .onSuccess {
-                    _currentRoom.value = it
-                    onReady()
-                }
-                .onFailure {
-                    _errorMessage.value = it.message
-                }
-            _isLoading.value = false
+            joinRoom(roomId)
+            onReady()
         }
     }
 
     fun joinRoom(roomId: String) {
         viewModelScope.launch {
             _isLoading.value = true
-            runCatching { repository.joinRoom(roomId) }
-                .onSuccess { _currentRoom.value = it }
-                .onFailure { _errorMessage.value = it.message }
+            runCatching {
+                repository.joinRoom(roomId)
+            }.onSuccess {
+                _currentRoom.value = it
+                if (it.roomType == "SOLO") {
+                    repository.startGame(it.roomId)
+                } else if (it.roomType == "DUEL" && it.players.size == 2) {
+                    repository.startGame(it.roomId)
+                }
+            }.onFailure {
+                _errorMessage.value = it.message
+            }
             _isLoading.value = false
         }
     }
@@ -150,7 +147,13 @@ class RoomViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             runCatching { repository.startGame(roomId) }
-                .onSuccess { _currentRoom.value = it }
+                .onSuccess {
+                    _currentRoom.value = it
+                    _player1Name.value = it.players.first().nickname
+                    _player2Name.value = it.players.last().nickname
+                    _player1Attempts.value = it.game.playerGameStats.get(UUID.fromString(it.players.first().playerId))!!.currentGuessAttempt
+                    _player2Attempts.value = it.game.playerGameStats.get(UUID.fromString(it.players.last().playerId))!!.currentGuessAttempt
+                }
                 .onFailure { _errorMessage.value = it.message }
             _isLoading.value = false
 
